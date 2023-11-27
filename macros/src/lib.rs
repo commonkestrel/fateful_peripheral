@@ -41,9 +41,13 @@ pub fn peripheral(attr: TokenStream, item: TokenStream) -> TokenStream {
         #[no_mangle]
         #[allow(private_interfaces)]
         pub unsafe extern "C" fn stateful_init(n: u8) -> *mut #ident {
-            &mut **::std::mem::ManuallyDrop::new(::std::boxed::Box::new(
-                <#ident as fateful_peripheral::Peripheral>::init(n),
-            )) as *mut #ident
+            match <#ident as fateful_peripheral::Peripheral>::init(n) {
+                Ok(state) => &mut **::std::mem::ManuallyDrop::new(::std::boxed::Box::new(state)) as *mut #ident,
+                Err(err) => {
+                    fateful_peripheral::update_last_error(err);
+                    ::std::ptr::null_mut()
+                }
+            }
         }
 
         #[no_mangle]

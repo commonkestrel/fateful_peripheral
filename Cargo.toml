@@ -3,8 +3,6 @@ name = "fateful_peripheral"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = ["examples/*", "macros", "."]
-
 [dependencies]
+anyhow = "1.0.75"
 macros = { path = "macros" }
