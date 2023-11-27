@@ -1,0 +1,11 @@
+[package]
+name = "stateful"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "stateful"
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+fateful_peripheral ={ path = "../.." }
