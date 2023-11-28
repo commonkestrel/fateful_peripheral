@@ -1,4 +1,5 @@
 # Fateful Peripheral
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/commonkestrel/fateful_peripheral/rust.yml)
 
 This is a utility library for working with [`fateful`](https://github.com/commonkestrel/fateful)'s peripheral system.
 This allows for the easy creation of stateful peripherals while avoiding `unsafe` code wherever possible.
