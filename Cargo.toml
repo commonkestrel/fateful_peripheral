@@ -3,6 +3,10 @@ name = "fateful_peripheral"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = ["examples/*"]
+resolver = "2"
+
 [dependencies]
 anyhow = "1.0"
 fateful_macros = { path = "fateful_macros" }
