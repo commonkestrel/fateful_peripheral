@@ -1,40 +1,12 @@
 # Fateful Peripheral
 
 This is a utility library for working with [`fateful`](https://github.com/commonkestrel/fateful)'s peripheral system.
-This allows for the easy creation of peripherals while avoiding `unsafe` code wherever possible.
-
-# Stateless
-
-Stateless peripherals are a quick and dirty method of making peripherals,
-by using global variables instead of a shared state.
-This, however, makes larger or more complicated peripherals very difficult,
-and requires lots of `unsafe` code.
-This also limits global state to variables that are `Send + Sync`.
-
-See an example of a simple stateless peripheral that just acts as an extra register:
-
-```rs
-use fateful_peripheral::{read, write};
-
-static mut STATE: u8 = 0;
-
-#[read]
-unsafe fn read(_: u8) -> u8 {
-    STATE
-}
-
-#[write]
-unsafe fn write(_: u8, data: u8) {
-    STATE = data;
-}
-```
-
-# Stateful
+This allows for the easy creation of stateful peripherals while avoiding `unsafe` code wherever possible.
 
 Stateful peripherals allow for shared global state wihout `unsafe` code.
 This is achieved through a trait that contains all the functionality of a peripheral.
 
-Here's the same peripheral, implemented with stateful logic:
+See an example of a simple peripheral that just acts as an extra register:
 
 ```rs
 use fateful_peripheral::{ Peripheral, peripheral };
@@ -56,10 +28,14 @@ impl Peripheral for State {
     fn write(&mut self, n: u8, data: u8) {
         self.data = data;
     }
+
+    fn reset(&mut self) {
+        self.data = 0;
+    }
 }
 ```
 
-As you can see, stateful peripherals are quite a bit safer,
+As you can see, stateful peripherals are quite a bit safer than manually handling the FFI,
 and follow Rust's conventions much more closesly.
 
 The `perihperal` attribute also adds an easy way to add a name to a peripherals,
