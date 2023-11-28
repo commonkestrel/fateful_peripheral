@@ -1,6 +1,6 @@
 #![doc = include_str!("../README.md")]
 
-pub use macros::*;
+pub use fateful_macros::*;
 
 use std::{ cell::RefCell, thread_local, ffi::{c_int, c_char}};
 use anyhow::Error;
@@ -10,7 +10,7 @@ thread_local! {
 }
 
 #[allow(unused_variables)]
-pub trait Peripheral: Sized {
+pub trait Peripheral: Sized {    
     fn init(n: u8) -> anyhow::Result<Self>;
 
     fn drop(self) {}
@@ -19,6 +19,7 @@ pub trait Peripheral: Sized {
         0x00
     }
     fn write(&mut self, n: u8, data: u8) {}
+    fn reset(&mut self) {}
 }
 
 macro_rules! bail {
@@ -28,14 +29,12 @@ macro_rules! bail {
     };
 }
 
-pub extern "C" fn update_last_error<E>(err: E)
-where
-    E: Into<Error>
-{
+
+pub fn update_last_error<E: Into<Error>>(err: E) {
     LAST_ERROR.with(|last| *last.borrow_mut() = Some(err.into()));
 }
 
-pub extern "C" fn last_error_length() -> c_int {
+pub fn last_error_length() -> c_int {
     LAST_ERROR.with(|last| {
         last.borrow().as_ref().map(|err| err.to_string().len() + 1).unwrap_or(0)
     }) as c_int
@@ -45,7 +44,7 @@ fn get_error_message() -> Option<String> {
     LAST_ERROR.with(|last| last.borrow().as_ref().map(|err| err.to_string()))
 }
 
-pub unsafe extern "C" fn get_last_error(buf: *mut c_char, length: c_int) -> c_int {
+pub unsafe fn get_last_error(buf: *mut c_char, length: c_int) -> c_int {
     if buf.is_null() {
         bail!(-1, "recieved a null pointer where it wasn't expected");
     }

@@ -9,3 +9,4 @@ crate-type = ["rlib", "cdylib"]
 
 [dependencies]
 fateful_peripheral ={ path = "../.." }
+anyhow = "1.0"

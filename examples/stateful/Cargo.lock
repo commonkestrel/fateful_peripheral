@@ -43,6 +43,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "stateful"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "fateful_peripheral",
+]
+
+[[package]]
 name = "syn"
 version = "2.0.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
