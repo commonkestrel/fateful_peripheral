@@ -11,6 +11,7 @@ See an example of a simple peripheral that just acts as an extra register:
 
 ```rust
 use fateful_peripheral::{ Peripheral, peripheral };
+use anyhow::Result;
 
 #[peripheral]
 struct State {
@@ -18,7 +19,7 @@ struct State {
 }
 
 impl Peripheral for State {
-    fn init(n: u8) -> Self {
+    fn init(n: u8) -> Result<Self> {
         State {data: 0}
     }
 
