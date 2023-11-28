@@ -8,7 +8,7 @@ This is achieved through a trait that contains all the functionality of a periph
 
 See an example of a simple peripheral that just acts as an extra register:
 
-```rs
+```rust
 use fateful_peripheral::{ Peripheral, peripheral };
 
 #[peripheral]
@@ -41,7 +41,7 @@ and follow Rust's conventions much more closesly.
 The `perihperal` attribute also adds an easy way to add a name to a peripherals,
 by setting the `name` property to a byte string:
 
-```rs
+```rust
 #[peripheral(name = b"Example")]
 struct State {
     /* ... */

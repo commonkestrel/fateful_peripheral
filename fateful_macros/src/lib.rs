@@ -4,6 +4,22 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput, LitByteStr};
 
+/// Exposes a [`Peripheral`](trait.Peripheral.html) to [`fateful`](https://github.com/commonkestrel/fateful).
+/// 
+/// # Example
+/// 
+/// ```no_run
+/// use fateful_peripheral::{ Peripheral, peripheral };
+/// 
+/// #[peripheral(name = b"Example")]
+/// struct State {
+///     /* ... */
+/// }
+/// 
+/// impl Peripheral for State {
+///     /* ... */
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn peripheral(attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut name: Option<LitByteStr> = None;
@@ -47,7 +63,7 @@ pub fn peripheral(attr: TokenStream, item: TokenStream) -> TokenStream {
                 match <#ident as fateful_peripheral::Peripheral>::init(n) {
                     Ok(state) => ::std::boxed::Box::into_raw(::std::boxed::Box::new(state)) as *mut ::std::ffi::c_void,
                     Err(err) => {
-                        fateful_peripheral::update_last_error(err);
+                        fateful_peripheral::errors::update_last_error(err);
                         ::std::ptr::null_mut()
                     }
                 }
@@ -81,12 +97,12 @@ pub fn peripheral(attr: TokenStream, item: TokenStream) -> TokenStream {
 
             #[no_mangle]
             pub unsafe extern "C" fn last_error_length() -> ::std::ffi::c_int {
-                fateful_peripheral::last_error_length()
+                fateful_peripheral::errors::last_error_length()
             }
 
             #[no_mangle]
             pub unsafe extern "C" fn get_last_error(buf: *mut ::std::ffi::c_char, length: ::std::ffi::c_int) -> ::std::ffi::c_int {
-                fateful_peripheral::get_last_error(buf, length)
+                fateful_peripheral::errors::get_last_error(buf, length)
             }
         }
     }
