@@ -39,10 +39,9 @@ pub fn peripheral(attr: TokenStream, item: TokenStream) -> TokenStream {
         #input
 
         #[no_mangle]
-        #[allow(private_interfaces)]
-        pub unsafe extern "C" fn stateful_init(n: u8) -> *mut #ident {
+        pub unsafe extern "C" fn stateful_init(n: u8) -> *mut ::std::ffi::c_void {
             match <#ident as fateful_peripheral::Peripheral>::init(n) {
-                Ok(state) => &mut **::std::mem::ManuallyDrop::new(::std::boxed::Box::new(state)) as *mut #ident,
+                Ok(state) => ::std::boxed::Box::into_raw(::std::boxed::Box::new(state)) as *mut ::std::ffi::c_void,
                 Err(err) => {
                     fateful_peripheral::update_last_error(err);
                     ::std::ptr::null_mut()
@@ -51,23 +50,20 @@ pub fn peripheral(attr: TokenStream, item: TokenStream) -> TokenStream {
         }
 
         #[no_mangle]
-        #[allow(private_interfaces)]
-        pub unsafe extern "C" fn stateful_read(state: *mut #ident, n: u8) -> u8 {
-            let mut boxed = ::std::mem::ManuallyDrop::new(::std::boxed::Box::from_raw(state));
+        pub unsafe extern "C" fn stateful_read(state: *mut ::std::ffi::c_void, n: u8) -> u8 {
+            let mut boxed = ::std::mem::ManuallyDrop::new(::std::boxed::Box::from_raw(state as *mut #ident));
             <#ident as fateful_peripheral::Peripheral>::read(&mut boxed, n)
         }
 
         #[no_mangle]
-        #[allow(private_interfaces)]
-        pub unsafe extern "C" fn stateful_write(state: *mut #ident, n: u8, data: u8) {
-            let mut boxed = ::std::mem::ManuallyDrop::new(::std::boxed::Box::from_raw(state));
+        pub unsafe extern "C" fn stateful_write(state: *mut ::std::ffi::c_void, n: u8, data: u8) {
+            let mut boxed = ::std::mem::ManuallyDrop::new(::std::boxed::Box::from_raw(state as *mut #ident));
             <#ident as fateful_peripheral::Peripheral>::write(&mut boxed, n, data);
         }
 
         #[no_mangle]
-        #[allow(private_interfaces)]
-        pub unsafe extern "C" fn stateful_drop(state: *mut #ident) {
-            let boxed = ::std::boxed::Box::from_raw(state);
+        pub unsafe extern "C" fn stateful_drop(state: *mut ::std::ffi::c_void) {
+            let boxed = ::std::boxed::Box::from_raw(state as *mut #ident);
             <#ident as fateful_peripheral::Peripheral>::drop(*boxed);
         }
 
