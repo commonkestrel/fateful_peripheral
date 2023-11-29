@@ -7,6 +7,27 @@ This allows for the easy creation of stateful peripherals while avoiding `unsafe
 Stateful peripherals allow for shared global state wihout `unsafe` code.
 This is achieved through a trait that contains all the functionality of a peripheral.
 
+
+# Project Setup
+
+In order to be dynamically loaded,
+your project must be configured as a library.
+
+In your `Cargo.toml`, add these lines:
+```toml
+[lib]
+crate-type = ["rlib", "cdylib"]
+```
+
+This crate is not yet on `crates.io`,
+so to add it to your project,
+add this line under `[dependencies]`:
+```toml
+fateful_peripheral = { git = "https://github.com/commonkestrel/fateful_peripheral" }
+```
+
+# Examples
+
 See an example of a simple peripheral that just acts as an extra register:
 
 ```rust
