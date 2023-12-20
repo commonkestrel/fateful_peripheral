@@ -89,6 +89,9 @@ pub trait Peripheral: Sized {
     /// where `ports` is the `ports` argument in [`init`](Peripheral::init)
     fn write(&mut self, port: u8, data: u8) {}
 
+    /// Called every time the CPU clock ticks (falling-edge).
+    fn tick(&mut self) {}
+
     /// Called whenever the CPU in the emulator is reset.
     /// 
     /// Implementors should make sure that the peripheral state

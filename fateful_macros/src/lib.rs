@@ -84,6 +84,12 @@ pub fn peripheral(attr: TokenStream, item: TokenStream) -> TokenStream {
             }
 
             #[no_mangle]
+            pub unsafe extern "C" fn stateful_tick(state: *mut ::std::ffi::c_void) {
+                let mut boxed = ::std::mem::ManuallyDrop::new(::std::boxed::Box::from_raw(state as *mut #ident));
+                <#ident as fateful_peripheral::Peripheral>::tick(&mut boxed);
+            }
+
+            #[no_mangle]
             pub unsafe extern "C" fn stateful_drop(state: *mut ::std::ffi::c_void) {
                 let boxed = ::std::boxed::Box::from_raw(state as *mut #ident);
                 <#ident as fateful_peripheral::Peripheral>::drop(*boxed);
